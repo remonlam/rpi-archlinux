@@ -6,34 +6,32 @@ yum install -y wget bsdtar
 
 ### SCRIPT VARIABLES
 ## Ask user for system specific variables
-read -p 'Enter device name (SD-Card): like /dev/sdb: ' sdCard
+read -p 'Enter device name (SD-Card): like sdb: ' sdCard
 
-#read -s -p 'Enter Root password: ' systemRootPassword
-
-##fdisk $sdCard
+part1=1
+part2=2
+##fdisk /dev/$sdCard
 
 # Create parition layout
 # NOTE: This will create a partition layout as beeing described in the README...
-(echo o; echo n; echo p; echo 1; echo ; echo +100M; echo t; echo c; echo 'W95 FAT32 (LBA)'; echo n; echo p; echo 2; echo ; echo ; echo w) | fdisk /dev/$sdCard
+(echo o; echo n; echo p; echo 1; echo ; echo +100M; echo t; echo c; echo n; echo p; echo 2; echo ; echo ; echo w) | fdisk /dev/$sdCard
 
-
-
-####Create and mount the FAT filesystem:
-mkfs.vfat /dev/$sdCard1
+# Create and mount the FAT filesystem:
+mkfs.vfat /dev/$sdCard$part1""
 mkdir boot
-mount /dev/$sdCard1 boot
+mount /dev/$sdCard$part1 boot
 
-####Create and mount the ext4 filesystem:
-mkfs.ext4 /dev/$sdCard2
+# Create and mount the ext4 filesystem:
+mkfs.ext4 /dev/$sdCard$part2
 mkdir root
-mount /dev/$sdCard2 root
+mount /dev/$sdCard$part2 root
 
-####Download and extract the root filesystem (as root, not via sudo):
+# Download and extract the root filesystem (as root, not via sudo):
 wget http://archlinuxarm.org/os/ArchLinuxARM-rpi-2-latest.tar.gz
 bsdtar -xpf ArchLinuxARM-rpi-2-latest.tar.gz -C root
 sync
 
-####Move boot files to the first partition:
+# Move boot files to the first partition:
 mv root/boot/* boot
 Unmount the two partitions:
 umount boot root
