@@ -1,11 +1,14 @@
-## ## ## Configure Arch Linux ARM on Raspberry Pi 1-2
-## ## ## Version: 0.0.3_rc5
-#############################################################
+#!/bin/sh
 
 ### SCRIPT VARIABLES
 ## Ask user for system specific variables
 read -p 'Enter hostname: ' networkHostname
 read -p 'Enter IP address: ' networkIp
+read -p 'Enter Subnet: ' networkSubnet
+read -p 'Enter Gateway: ' networkGateway
+read -p 'Enter DNS1: ' networkDns1
+read -p 'Enter DNS2: ' networkDns2
+read -p 'Enter DNS Search Domain: ' networkDnsSearch
 read -s -p 'Enter Root password: ' systemRootPassword
 
 
