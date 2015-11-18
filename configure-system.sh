@@ -20,7 +20,7 @@ read -s -p 'Enter Root password: ' systemRootPassword
 #networkDns1=192.168.0.100
 #networkDns2=192.168.0.200
 #networkDnsSearch=domain.local
-#networkDevice=eth0
+networkDevice=eth0
 
 # System Variables
 #systemRootPassword=P@ssword
