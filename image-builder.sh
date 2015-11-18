@@ -37,9 +37,15 @@ sync
 
 #Move boot files to the first partition:
 mv root/boot/* boot
+"echo 'lcd_rotate=2' >> boot/config.txt"
 
 # Copy "configure-system.sh" script to "root"
 mv /tmp/configure-system.sh root
+
+
+# Do a final sync, and wait 5 seconds before unmouting
+sync
+sleep 5
 
 #Unmount the two partitions:
 umount boot root
