@@ -15,12 +15,12 @@ read -s -p 'Enter Root password: ' systemRootPassword
 # Network variables
 #networkHostname=
 #networkIp=
-networkSubnet=24
-networkGateway=192.168.0.1
-networkDns1=192.168.0.100
-networkDns2=192.168.0.200
-networkDnsSearch=domain.local
-networkDevice=eth0
+#networkSubnet=24
+#networkGateway=192.168.0.1
+#networkDns1=192.168.0.100
+#networkDns2=192.168.0.200
+#networkDnsSearch=domain.local
+#networkDevice=eth0
 
 # System Variables
 #systemRootPassword=P@ssword
