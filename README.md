@@ -1,4 +1,6 @@
 #Create an ArchLinux ARM (Raspberry Pi) SD Card image.
+![Raspberry Pi, ArchLinux & Docker](/images/docker+rpi.png)
+
 For some reason ArchLinux community stop providing an pre-build image for the Raspberry Pi.
 The instructions bellow are straight form there website @ (http://archlinuxarm.org/platforms/armv7/broadcom/raspberry-pi-2).
 
