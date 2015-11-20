@@ -20,10 +20,13 @@ read -s -p 'Enter Root password: ' systemRootPassword
 #networkDns1=192.168.0.100
 #networkDns2=192.168.0.200
 #networkDnsSearch=domain.local
-networkDevice=eth0
+networkDevice=eth0 # This is the default LAN port on the raspbeery Pi, if you're using WiFi use wlan0
 
 # System Variables
-#systemRootPassword=P@ssword
+#systemRootPassword=P@ssword,
+
+# Time servicess
+# Note: uses the Dutch time server
 systemNtp0=0.nl.pool.ntp.org
 systemNtp1=1.nl.pool.ntp.org
 systemNtp2=2.nl.pool.ntp.org
@@ -66,8 +69,8 @@ timedatectl set-timezone Europe/Amsterdam
 echo -e "NTP=$systemNtp0 $systemNtp1 $systemNtp2 $systemNtp3" > /etc/systemd/timesyncd.conf
 
 # Check if everything configured correctly, and check the system time using "date":
-timedatectl status
-date
+#timedatectl status
+#date
 
 # Sets root password to what the user has filled in:
 echo root:$systemRootPassword | chpasswd
