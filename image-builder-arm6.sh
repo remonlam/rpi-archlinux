@@ -1,16 +1,16 @@
 #!/bin/sh
 
-# Do some pre-requirements
-# Install wget and badtar
-yum install -y wget bsdtar
-wget -P /tmp https://raw.githubusercontent.com/remonlam/rpi-archlinux/master/configure-system.sh
-chmod 755 /tmp/configure-system.sh
-
 ### SCRIPT VARIABLES
 ## Ask user for system specific variables
 read -p 'Enter device name (SD-Card): like sdb: ' sdCard
 part1=1
 part2=2
+
+# Do some pre-requirements
+# Install wget and badtar
+yum install -y wget bsdtar
+wget -P /tmp https://raw.githubusercontent.com/remonlam/rpi-archlinux/master/configure-system.sh
+chmod 755 /tmp/configure-system.sh
 
 ##fdisk /dev/$sdCard
 # Create parition layout
@@ -37,11 +37,11 @@ sync
 
 #Move boot files to the first partition:
 mv root/boot/* boot
-"echo 'lcd_rotate=2' >> boot/config.txt"
+echo lcd_rotate=2 >> boot/config.txt
+sed -i 's/gpu_mem=64/gpu_mem=16/' boot/config.txt
 
 # Copy "configure-system.sh" script to "root"
 mv /tmp/configure-system.sh root
-
 
 # Do a final sync, and wait 5 seconds before unmouting
 sync
