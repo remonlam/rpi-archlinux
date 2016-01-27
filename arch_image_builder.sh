@@ -110,11 +110,16 @@ mv /temp/configure-system.sh /temp/root
 
 # Copy eth0.service file to systemd and create symlink to make it work at first boot
     #wget -P /temp/ https://raw.githubusercontent.com/remonlam/rpi-zero-arch/master/systemd_config/netctl%40wlan0.service
-    #cp -rf /temp/netctl@wlan0.service /temp/root/etc/systemd/system/
-## Create symlink
-ln -s '/temp/root/etc/systemd/system/netctl@wlan0.service' '/temp/root/etc/systemd/system/multi-user.target.wants/netctl@wlan0.service'
+##### CHECK VARS!!!!
+echo -e "Description='Network - $networkDevice'\nInterface=$networkDevice\nConnection=ethernet\nIP=static\nAddress=('$networkIp/$networkSubnet')\nGateway=('$networkGateway')\nDNS=('$networkDns1' '$networkDns2')" > /temp/netctl@eth0.service
+##### CHECK VARS!!!!
 
-echo -e "Description='Network - $networkDevice'\nInterface=$networkDevice\nConnection=ethernet\nIP=static\nAddress=('$networkIp/$networkSubnet')\nGateway=('$networkGateway')\nDNS=('$networkDns1' '$networkDns2')" > /etc/netctl/eth0
+cp -rf /temp/netctl@eth0.service /temp/root/etc/systemd/system/
+
+
+## Create symlink
+ln -s '/temp/root/etc/systemd/system/netctl@eth0.service' '/temp/root/etc/systemd/system/multi-user.target.wants/netctl@eth0.service'
+
 
 ############
 
