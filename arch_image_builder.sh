@@ -18,8 +18,8 @@ read -p 'What version of Pi? 6 or 7 ' armVersion
 read -p 'Enter device name (SD-Card): like sdb: ' sdCard
 read -p 'Enter a new hostname: ' hostName
 read -p 'Enter network adapter (eth0): ' networkDevice
-##read -p 'Enter wifi name (Accesspoint): ' wifiAP
-##read -p 'Enter wifi password: ' wifiKey
+##read -p 'Enter wifi name (Accesspoint): ' wifiAP ## USED FOR WLAN
+##read -p 'Enter wifi password: ' wifiKey ## USED FOR WLAN
 read -p 'Enter IP address: ' networkIp
 read -p 'Enter Subnet: ' networkSubnet
 read -p 'Enter Gateway: ' networkGateway
@@ -41,57 +41,65 @@ systemNtp3=3.nl.pool.ntp.org
 
 ########################## PRE-REQUIREMENTS ##########################
 # Check or install wget, tar and badtar
-yum install -y wget bsdtar tar
+  yum install -y wget bsdtar tar
 
 # Wipe microSD card @ $sdCard
-echo "Wipe microSD card ('$sdCard')"
-dd if=/dev/zero of=/dev/$sdCard bs=1M count=1
+  echo "Wipe microSD card ('$sdCard')"
+  dd if=/dev/zero of=/dev/$sdCard bs=1M count=1
 
+########################## SD CARD PREPARATION ##########################
 
-##fdisk /dev/$sdCard
-# Create parition layout
-echo "Create new parition layout on '$sdCard'"
-# NOTE: This will create a partition layout as beeing described in the README...
-(echo o; echo n; echo p; echo 1; echo ; echo +100M; echo t; echo c; echo n; echo p; echo 2; echo ; echo ; echo w) | fdisk /dev/$sdCard
-# Sync disk
-sync
+### CREATE NEW PARTITION:
+  # Create parition layout
+  echo "Create new parition layout on '$sdCard'"
+  # NOTE: This will create a partition layout as beeing described in the README...
+  (echo o; echo n; echo p; echo 1; echo ; echo +100M; echo t; echo c; echo n; echo p; echo 2; echo ; echo ; echo w) | fdisk /dev/$sdCard
 
-#Create and mount the FAT filesystem:
-echo "Create and mount the FAT filesystem on '$sdCard$part1'"
-mkfs.vfat /dev/$sdCard$part1
-mkdir -p /temp/boot
-mount /dev/$sdCard$part1 /temp/boot
+  # Sync disk
+  sync
 
-#Create and mount the ext4 filesystem:
+### CREATE AND MOUNT FAT FS:
+  echo "Create and mount the FAT filesystem on '$sdCard$part1'"
+  mkfs.vfat /dev/$sdCard$part1
+  mkdir -p /temp/boot
+  mount /dev/$sdCard$part1 /temp/boot
+
+### CREATE AND MOUNT EXT4 FS:
 echo "Create and mount the ext4 filesystem on '$sdCard$part2'"
 mkfs.ext4 /dev/$sdCard$part2
 mkdir -p /temp/root
 mount /dev/$sdCard$part2 /temp/root
 
-# Download Arch Linux ARM image, check what version ARM v6 or v7
-echo "Download Arch Linux ARM v'$armVersion' and expand to root"
-  if [ $armVersion=6 ]; then
-    echo "Downloading Arch Linux ARM v'$armVersion'"
-     wget -P /temp/ http://archlinuxarm.org/os/ArchLinuxARM-rpi-latest.tar.gz
-    echo "Download complete, expanding tar.gz to root"
-     bsdtar -xpf /temp/ArchLinuxARM-rpi-latest.tar.gz -C /temp/root
-     sync
-  else
-    echo "Downloading Arch Linux ARM v'$armVersion'"
-     wget  -P /temp/ http://archlinuxarm.org/os/ArchLinuxARM-rpi-2-latest.tar.gz
-    echo "Download complete, expanding tar.gz to root"
-     bsdtar -xpf /temp/ArchLinuxARM-rpi-2-latest.tar.gz -C /temp/root
-     sync
-  fi
-echo "Download and extract complete"
+########################## DOWNLOAD ARCH LINUX IMAGE ##########################
 
-#Move boot files to the first partition:
-mv /temp/root/boot/* /temp/boot
-echo '# Change rotation of Pi Screen' >> /temp/boot/config.txt
-echo lcd_rotate=2 >> /temp/boot/config.txt
+### DOWNLAOD CORRECT IMAGE FOR ARM ARCHITECTURE:
+  # Download Arch Linux ARM image, check what version ARM v6 or v7
+  echo "Download Arch Linux ARM v'$armVersion' and expand to root"
+    if [ $armVersion=6 ]; then
+      echo "Downloading Arch Linux ARM v'$armVersion'"
+        wget -P /temp/ http://archlinuxarm.org/os/ArchLinuxARM-rpi-latest.tar.gz
+      echo "Download complete, expanding tar.gz to root"
+        bsdtar -xpf /temp/ArchLinuxARM-rpi-latest.tar.gz -C /temp/root
+      sync
+    else
+      echo "Downloading Arch Linux ARM v'$armVersion'"
+        wget  -P /temp/ http://archlinuxarm.org/os/ArchLinuxARM-rpi-2-latest.tar.gz
+      echo "Download complete, expanding tar.gz to root"
+        bsdtar -xpf /temp/ArchLinuxARM-rpi-2-latest.tar.gz -C /temp/root
+      sync
+    fi
+    echo "Download and extract complete"
 
-# Change GPU memory from 64MB to 16MB
-sed -i 's/gpu_mem=64/gpu_mem=16/' /temp/boot/config.txt
+### COPY IMAGE FILES TO CORRECT PARTITION:
+  # Move boot files to the first partition:
+    mv /temp/root/boot/* /temp/boot
+    echo '# Change rotation of Pi Screen' >> /temp/boot/config.txt
+    echo lcd_rotate=2 >> /temp/boot/config.txt
+
+
+### MAKE CHANGES IN BOOT CONFIG:
+  # Change GPU memory from 64MB to 16MB
+    sed -i 's/gpu_mem=64/gpu_mem=16/' /temp/boot/config.txt
 
 
 
