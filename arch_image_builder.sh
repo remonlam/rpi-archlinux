@@ -17,14 +17,16 @@ echo "NOTE: PI 1 MODEL A+, PI 1 MODEL B+, PI ZERO are 6 --- PI 2 MODEL B is 7"
 read -p 'What version of Pi? 6 or 7 ' armVersion
 read -p 'Enter device name (SD-Card): like sdb: ' sdCard
 read -p 'Enter a new hostname: ' hostName
-#read -p 'Enter wifi name (Accesspoint): ' wifiAP
-#read -p 'Enter wifi password: ' wifiKey
+read -p 'Enter network adapter (eth0): ' networkDevice
+##read -p 'Enter wifi name (Accesspoint): ' wifiAP
+##read -p 'Enter wifi password: ' wifiKey
 read -p 'Enter IP address: ' networkIp
 read -p 'Enter Subnet: ' networkSubnet
 read -p 'Enter Gateway: ' networkGateway
 read -p 'Enter DNS1: ' networkDns1
 read -p 'Enter DNS2: ' networkDns2
 read -p 'Enter DNS Search Domain: ' networkDnsSearch
+
 part1=1
 part2=2
 
@@ -110,23 +112,40 @@ mv /temp/configure-system.sh /temp/root
 
 # Copy netctl eth0 config file
 wget -P /temp/ https://raw.githubusercontent.com/remonlam/rpi-archlinux/master/systemd_config/eth0
+# Copy eth0 config file to SD card
 cp -rf /temp/eth0 /temp/root/etc/netctl/
 
-# Copy eth0.service file to systemd and create symlink to make it work at first boot
-wget -P /temp/ https://raw.githubusercontent.com/remonlam/rpi-archlinux/master/systemd_config/netctl%40eth0.service
-
 ##### CHECK VARS!!!!
+# Injecting network information to the eth0 config file
 echo -e "Description='Network - $networkDevice'\nInterface=$networkDevice\nConnection=ethernet\nIP=static\nAddress=('$networkIp/$networkSubnet')\nGateway=('$networkGateway')\nDNS=('$networkDns1' '$networkDns2')" > /temp/netctl@eth0.service
 ##### CHECK VARS!!!!
 
+### Systemd eth0.service configuration
+# Copy eth0.service file to systemd and create symlink to make it work at first boot
+wget -P /temp/ https://raw.githubusercontent.com/remonlam/rpi-archlinux/master/systemd_config/netctl%40eth0.service
+
+# Copy netctl@eth0 config file to SD card
 cp -rf /temp/netctl@eth0.service /temp/root/etc/systemd/system/
 
-
-## Create symlink
+# Create symlink
 ln -s '/temp/root/etc/systemd/system/netctl@eth0.service' '/temp/root/etc/systemd/system/multi-user.target.wants/netctl@eth0.service'
 
 
 ############
+
+
+########################## NETWORKING ##########################
+
+# Populate /etc/resolv.conf with new dns servers:
+echo -e "search $networkDnsSearch\nnameserver $networkDns1\nnameserver $networkDns2" > /etc/resolv.conf ## PATH NEEDS TO BE CHANGED
+
+
+
+
+
+
+
+
 
 
 # Enable root logins for sshd
