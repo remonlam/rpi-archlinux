@@ -139,7 +139,7 @@ mount /dev/$sdCard$part2 /temp/root
   cp -rf /temp/eth0 /temp/root/etc/netctl/
 
 
-### Systemd eth0.service configuration
+### SYSTEMD ETH0.SERVICE CONFIGURATION
   # Copy eth0.service file to systemd and create symlink to make it work at first boot
   wget -P /temp/ https://raw.githubusercontent.com/remonlam/rpi-archlinux/master/systemd_config/netctl%40eth0.service
 
