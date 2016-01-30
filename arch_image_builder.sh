@@ -27,8 +27,17 @@ read -p 'Enter DNS1: ' networkDns1
 read -p 'Enter DNS2: ' networkDns2
 read -p 'Enter DNS Search Domain: ' networkDnsSearch
 
+# Partition VARIABLES
 part1=1
 part2=2
+
+# Time services VARIABLES
+# Note: this will make you use the Dutch time server, chekc ntp.org for your local ntp pool
+systemNtp0=0.nl.pool.ntp.org
+systemNtp1=1.nl.pool.ntp.org
+systemNtp2=2.nl.pool.ntp.org
+systemNtp3=3.nl.pool.ntp.org
+
 
 
 ### PRE-REQUIREMENTS
@@ -110,25 +119,6 @@ mv /temp/configure-system.sh /temp/root
 
 ############
 
-# Copy netctl eth0 config file
-wget -P /temp/ https://raw.githubusercontent.com/remonlam/rpi-archlinux/master/systemd_config/eth0
-# Copy eth0 config file to SD card
-cp -rf /temp/eth0 /temp/root/etc/netctl/
-
-##### CHECK VARS!!!!
-# Injecting network information to the eth0 config file
-echo -e "Description='Network - $networkDevice'\nInterface=$networkDevice\nConnection=ethernet\nIP=static\nAddress=('$networkIp/$networkSubnet')\nGateway=('$networkGateway')\nDNS=('$networkDns1' '$networkDns2')" > /temp/netctl@eth0.service
-##### CHECK VARS!!!!
-
-### Systemd eth0.service configuration
-# Copy eth0.service file to systemd and create symlink to make it work at first boot
-wget -P /temp/ https://raw.githubusercontent.com/remonlam/rpi-archlinux/master/systemd_config/netctl%40eth0.service
-
-# Copy netctl@eth0 config file to SD card
-cp -rf /temp/netctl@eth0.service /temp/root/etc/systemd/system/
-
-# Create symlink
-ln -s '/temp/root/etc/systemd/system/netctl@eth0.service' '/temp/root/etc/systemd/system/multi-user.target.wants/netctl@eth0.service'
 
 
 ############
@@ -136,22 +126,54 @@ ln -s '/temp/root/etc/systemd/system/netctl@eth0.service' '/temp/root/etc/system
 
 ########################## NETWORKING ##########################
 
-# Populate /etc/resolv.conf with new dns servers:
-echo -e "search $networkDnsSearch\nnameserver $networkDns1\nnameserver $networkDns2" > /etc/resolv.conf ## PATH NEEDS TO BE CHANGED
+### NETCTL ETH0 CONFIGURATION:
+  # Copy netctl eth0 config file
+  wget -P /temp/ https://raw.githubusercontent.com/remonlam/rpi-archlinux/master/systemd_config/eth0
+
+  # Copy eth0 config file to SD card
+  cp -rf /temp/eth0 /temp/root/etc/netctl/
+
+
+### Systemd eth0.service configuration
+  # Copy eth0.service file to systemd and create symlink to make it work at first boot
+  wget -P /temp/ https://raw.githubusercontent.com/remonlam/rpi-archlinux/master/systemd_config/netctl%40eth0.service
+
+  # Injecting network information to the eth0 config file
+  echo -e "Description='Network - $networkDevice'\nInterface=$networkDevice\nConnection=ethernet\nIP=static\nAddress=('$networkIp/$networkSubnet')\nGateway=('$networkGateway')\nDNS=('$networkDns1' '$networkDns2')" > /temp/netctl@eth0.service
+
+  # Copy netctl@eth0 config file to SD card
+  cp -rf /temp/netctl@eth0.service /temp/root/etc/systemd/system/
+
+  # Create symlink
+  ln -s '/temp/root/etc/systemd/system/netctl@eth0.service' '/temp/root/etc/systemd/system/multi-user.target.wants/netctl@eth0.service'
+
+
+### POPULATE DNS CONFIGURATION:
+  # Populate /etc/resolv.conf with new dns servers:
+  echo -e "search $networkDnsSearch\nnameserver $networkDns1\nnameserver $networkDns2" > /temp/root/etc/resolv.conf
 
 
 
+########################## SYSTEM CONFIGURATION ##########################
+
+### TIME SETTINGS:
+  # Time zone configuration, sets it to Europe/Amsterdam:
+  timedatectl set-timezone Europe/Amsterdam
+
+  # Populate NTP source file "etc/systemd/timesyncd.conf":
+  echo -e "NTP=$systemNtp0 $systemNtp1 $systemNtp2 $systemNtp3" > /etc/systemd/timesyncd.conf
+
+
+### SSH CONFIGURATION:
+  # Enable root logins for sshd
+  sed -i "s/"#"PermitRootLogin prohibit-password/PermitRootLogin yes/" /temp/root/etc/ssh/sshd_config
+
+  # Change hostname
+  sed -i 's/alarmpi/'$hostName'/' /temp/root/etc/hostname
 
 
 
-
-
-
-
-# Enable root logins for sshd
-sed -i "s/"#"PermitRootLogin prohibit-password/PermitRootLogin yes/" /temp/root/etc/ssh/sshd_config
-# Change hostname
-sed -i 's/alarmpi/'$hostName'/' /temp/root/etc/hostname
+########################## FINALIZING SD CARD POPULATION ##########################
 
 # Do a final sync, and wait 5 seconds before unmouting
 sync
