@@ -1,17 +1,17 @@
 #!/bin/sh
 
-### RUNTIME CHECK
+########################## RUNTIME CHECK ##########################
 # Check if script is running as root, if not then exit
-echo "THIS SCRIPT NEEDS TO BE RUN AS ROOT, CHECKING..."
-if [ `id -u` = 0 ] ; then
-        echo "Running as ROOT, continue with script..."
-  else
-echo "Not running as ROOT exit script..."
-exit 1
+  echo "THIS SCRIPT NEEDS TO BE RUN AS ROOT, CHECKING..."
+    if [ `id -u` = 0 ] ; then
+          echo "Running as ROOT, continue with script..."
+    else
+          echo "Not running as ROOT exit script..."
+          exit 1
 fi
 
 
-### SCRIPT VARIABLES
+########################## SCRIPT VARIABLES ##########################
 ## Ask user for system specific variables
 echo "NOTE: PI 1 MODEL A+, PI 1 MODEL B+, PI ZERO are 6 --- PI 2 MODEL B is 7"
 read -p 'What version of Pi? 6 or 7 ' armVersion
@@ -39,8 +39,7 @@ systemNtp2=2.nl.pool.ntp.org
 systemNtp3=3.nl.pool.ntp.org
 
 
-
-### PRE-REQUIREMENTS
+########################## PRE-REQUIREMENTS ##########################
 # Check or install wget, tar and badtar
 yum install -y wget bsdtar tar
 
@@ -95,6 +94,8 @@ echo lcd_rotate=2 >> /temp/boot/config.txt
 sed -i 's/gpu_mem=64/gpu_mem=16/' /temp/boot/config.txt
 
 
+
+################## WLAN STUFF NOT USED ANYMORE
     ### Download extra sources and merge it
     # Download "libnl" and "wpa_supplicant" package tar.gz file from GitHub
     #wget -P /temp/ https://github.com/remonlam/rpi-zero-arch/raw/master/packages/libnl_wpa_package.tar.gz
@@ -102,10 +103,10 @@ sed -i 's/gpu_mem=64/gpu_mem=16/' /temp/boot/config.txt
     #tar -xf /temp/libnl_wpa_package.tar.gz -C /temp/root/
 
 # Download post configuration script and make file executable
-wget -P /temp/ https://raw.githubusercontent.com/remonlam/rpi-zero-arch/master/systemd_config/configure-system.sh
-chmod 755 /temp/configure-system.sh
+#wget -P /temp/ https://raw.githubusercontent.com/remonlam/rpi-zero-arch/master/systemd_config/configure-system.sh
+#chmod 755 /temp/configure-system.sh
 # Copy "configure-system.sh" script to "root"
-mv /temp/configure-system.sh /temp/root
+#mv /temp/configure-system.sh /temp/root
 
     # Copy netctl wlan0 config file
     #wget -P /temp/ https://raw.githubusercontent.com/remonlam/rpi-zero-arch/master/systemd_config/wlan0
@@ -117,11 +118,7 @@ mv /temp/configure-system.sh /temp/root
     #sed -i "s/Key='SSID-KEY'/Key='$wifiKey'/" /temp/root/etc/netctl/wlan0
 
 
-############
-
-
-
-############
+################## WLAN STUFF NOT USED ANYMORE
 
 
 ########################## NETWORKING ##########################
@@ -176,17 +173,19 @@ mv /temp/configure-system.sh /temp/root
 ########################## FINALIZING SD CARD POPULATION ##########################
 
 # Do a final sync, and wait 5 seconds before unmouting
-sync
-echo "Wait 5 seconds before unmouting 'boot' and 'root' mount points"
-sleep 5
+  sync
+  echo "Wait 5 seconds before unmouting 'boot' and 'root' mount points"
+  sleep 5
 
 #Unmount the boot and root partitions:
-umount /temp/boot /temp/root
-echo "Unmount completed, it's safe to remove the microSD card!"
+  umount /temp/boot /temp/root
+  echo "Unmount completed, it's safe to remove the microSD card!"
 
 # Removing data sources
-echo "Remove datasources, waiting until mount points are removed"
-sleep 5
-rm -rf /temp/
-echo "All files in /temp/ are removed!"
-exit 0
+  echo "Remove datasources, waiting until mount points are removed"
+  sleep 5
+  rm -rf /temp/
+  echo "All files in /temp/ are removed!"
+
+# Set exit code to zero
+  exit 0
