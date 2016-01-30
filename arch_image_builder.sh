@@ -166,7 +166,7 @@ mount /dev/$sdCard$part2 /temp/root
   timedatectl set-timezone Europe/Amsterdam
 
   # Populate NTP source file "etc/systemd/timesyncd.conf":
-  echo -e "NTP=$systemNtp0 $systemNtp1 $systemNtp2 $systemNtp3" > /etc/systemd/timesyncd.conf
+  echo -e "NTP=$systemNtp0 $systemNtp1 $systemNtp2 $systemNtp3" > /temp/root/etc/systemd/timesyncd.conf
 
 
 ### SSH CONFIGURATION:
