@@ -108,8 +108,13 @@ mv /temp/configure-system.sh /temp/root
 
 ############
 
+# Copy netctl eth0 config file
+wget -P /temp/ https://raw.githubusercontent.com/remonlam/rpi-archlinux/master/systemd_config/eth0
+cp -rf /temp/eth0 /temp/root/etc/netctl/
+
 # Copy eth0.service file to systemd and create symlink to make it work at first boot
-    #wget -P /temp/ https://raw.githubusercontent.com/remonlam/rpi-zero-arch/master/systemd_config/netctl%40wlan0.service
+wget -P /temp/ https://raw.githubusercontent.com/remonlam/rpi-archlinux/master/systemd_config/netctl%40eth0.service
+
 ##### CHECK VARS!!!!
 echo -e "Description='Network - $networkDevice'\nInterface=$networkDevice\nConnection=ethernet\nIP=static\nAddress=('$networkIp/$networkSubnet')\nGateway=('$networkGateway')\nDNS=('$networkDns1' '$networkDns2')" > /temp/netctl@eth0.service
 ##### CHECK VARS!!!!
