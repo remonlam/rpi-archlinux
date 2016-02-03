@@ -150,7 +150,8 @@ mount /dev/$sdCard$part2 /temp/root
   cp -rf /temp/netctl@eth0.service /temp/root/etc/systemd/system/
 
   # Create symlink
-  ln -s '/temp/root/etc/systemd/system/netctl@eth0.service' '/temp/root/etc/systemd/system/multi-user.target.wants/netctl@eth0.service'
+ln -s '/temp/root/etc/systemd/system/netctl@eth0.service' '/temp/root/etc/systemd/system/multi-user.target.wants/netctl@eth0.service'
+
 
 
 ### POPULATE DNS CONFIGURATION:
@@ -163,7 +164,7 @@ mount /dev/$sdCard$part2 /temp/root
 
 ### TIME SETTINGS:
   # Time zone configuration, sets it to Europe/Amsterdam:
-  timedatectl set-timezone Europe/Amsterdam
+  #timedatectl set-timezone Europe/Amsterdam
 
   # Populate NTP source file "etc/systemd/timesyncd.conf":
   echo -e "NTP=$systemNtp0 $systemNtp1 $systemNtp2 $systemNtp3" > /temp/root/etc/systemd/timesyncd.conf
