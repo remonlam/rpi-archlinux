@@ -51,7 +51,6 @@ systemNtp3=3.nl.pool.ntp.org
 
 
 
-
 ########################## SD CARD PREPARATION ##########################
 
 ### CREATE NEW PARTITION:
