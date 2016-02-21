@@ -153,6 +153,9 @@ mount /dev/$sdCard$part2 /temp/root
 ln -s '/temp/root/etc/systemd/system/netctl@eth0.service' '/temp/root/etc/systemd/system/multi-user.target.wants/netctl@eth0.service'
 
 ### POPULATE DNS CONFIGURATION:
+
+  # Remove symlink to resolv.conf
+  rm -rf /temp/root/etc/resolv.conf
   # Populate /etc/resolv.conf with new dns servers:
   echo -e "search $networkDnsSearch\nnameserver $networkDns1\nnameserver $networkDns2" > /temp/root/etc/resolv.conf
 
@@ -163,7 +166,7 @@ ln -s '/temp/root/etc/systemd/system/netctl@eth0.service' '/temp/root/etc/system
   rm -rf /temp/root/etc/systemd/system/sockets.target.wants/systemd-networkd.socket
 
   # Cleanup Systemd RESOLVING
-  #rm -rf /temp/root/etc/systemd/system/multi-user.target.wants/systemd-resolved.service
+  rm -rf /temp/root/etc/systemd/system/multi-user.target.wants/systemd-resolved.service
 
 ########################## SYSTEM CONFIGURATION ##########################
 
