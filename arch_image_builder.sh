@@ -11,6 +11,7 @@
 fi
 
 
+
 ########################## SCRIPT VARIABLES ##########################
 ## Ask user for system specific variables
 echo "NOTE: PI 1 MODEL A+, PI 1 MODEL B+, PI ZERO are 6 --- PI 2 MODEL B is 7"
@@ -39,6 +40,7 @@ systemNtp2=2.nl.pool.ntp.org
 systemNtp3=3.nl.pool.ntp.org
 
 
+
 ########################## PRE-REQUIREMENTS ##########################
 # Check or install wget, tar and badtar
   yum install -y wget bsdtar tar
@@ -46,6 +48,9 @@ systemNtp3=3.nl.pool.ntp.org
 # Wipe microSD card @ $sdCard
   echo "Wipe microSD card ('$sdCard')"
   dd if=/dev/zero of=/dev/$sdCard bs=1M count=1
+
+
+
 
 ########################## SD CARD PREPARATION ##########################
 
@@ -69,6 +74,9 @@ echo "Create and mount the ext4 filesystem on '$sdCard$part2'"
 mkfs.ext4 /dev/$sdCard$part2
 mkdir -p /temp/root
 mount /dev/$sdCard$part2 /temp/root
+
+
+
 
 ########################## DOWNLOAD ARCH LINUX IMAGE ##########################
 
@@ -102,32 +110,6 @@ mount /dev/$sdCard$part2 /temp/root
     sed -i 's/gpu_mem=64/gpu_mem=16/' /temp/boot/config.txt
 
 
-
-                                                  ################## WLAN STUFF NOT USED ANYMORE
-                                                      ### Download extra sources and merge it
-                                                      # Download "libnl" and "wpa_supplicant" package tar.gz file from GitHub
-                                                      #wget -P /temp/ https://github.com/remonlam/rpi-zero-arch/raw/master/packages/libnl_wpa_package.tar.gz
-                                                      # Extract tar.gz file to root/
-                                                      #tar -xf /temp/libnl_wpa_package.tar.gz -C /temp/root/
-
-                                                  # Download post configuration script and make file executable
-                                                  #wget -P /temp/ https://raw.githubusercontent.com/remonlam/rpi-zero-arch/master/systemd_config/configure-system.sh
-                                                  #chmod 755 /temp/configure-system.sh
-                                                  # Copy "configure-system.sh" script to "root"
-                                                  #mv /temp/configure-system.sh /temp/root
-
-                                                      # Copy netctl wlan0 config file
-                                                      #wget -P /temp/ https://raw.githubusercontent.com/remonlam/rpi-zero-arch/master/systemd_config/wlan0
-                                                      #cp -rf /temp/wlan0 /temp/root/etc/netctl/
-
-                                                      # Replace SSID name
-                                                      #sed -i "s/ESSID='SSID-NAME'/ESSID='$wifiAP'/" /temp/root/etc/netctl/wlan0
-                                                      # Replace SSID password
-                                                      #sed -i "s/Key='SSID-KEY'/Key='$wifiKey'/" /temp/root/etc/netctl/wlan0
-
-
-                                                  ################## WLAN STUFF NOT USED ANYMORE
-###
 
 ########################## NETWORKING ##########################
 
@@ -167,6 +149,8 @@ ln -s '/temp/root/etc/systemd/system/netctl@eth0.service' '/temp/root/etc/system
 
   # Cleanup Systemd RESOLVING
   rm -rf /temp/root/etc/systemd/system/multi-user.target.wants/systemd-resolved.service
+
+
 
 ########################## SYSTEM CONFIGURATION ##########################
 
