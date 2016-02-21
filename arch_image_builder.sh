@@ -193,3 +193,8 @@ ln -s '/temp/root/etc/systemd/system/netctl@eth0.service' '/temp/root/etc/system
 
   # Set exit code to zero
   exit 0
+  echo "You can login with the following accounts;"
+  echo "USER: arch pw=arch"
+  echo "ROOT: root pw=root"
+  echo ""
+  echo "You can now safely remove the SD-Card"
