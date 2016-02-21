@@ -128,12 +128,14 @@ mount /dev/$sdCard$part2 /temp/root
 
                                                   ################## WLAN STUFF NOT USED ANYMORE
 
-
 ########################## NETWORKING ##########################
 
 ### NETCTL ETH0 CONFIGURATION:
   # Copy netctl eth0 config file
   wget -P /temp/ https://raw.githubusercontent.com/remonlam/rpi-archlinux/master/systemd_config/eth0
+
+  # Injecting network information to the eth0 config file
+  echo -e "Description='Network - $networkDevice'\nInterface=$networkDevice\nConnection=ethernet\nIP=static\nAddress=('$networkIp/$networkSubnet')\nGateway=('$networkGateway')\nDNS=('$networkDns1' '$networkDns2')" > /temp/eth0
 
   # Copy eth0 config file to SD card
   cp -rf /temp/eth0 /temp/root/etc/netctl/
@@ -142,9 +144,6 @@ mount /dev/$sdCard$part2 /temp/root
 ### SYSTEMD ETH0.SERVICE CONFIGURATION
   # Copy eth0.service file to systemd and create symlink to make it work at first boot
   wget -P /temp/ https://raw.githubusercontent.com/remonlam/rpi-archlinux/master/systemd_config/netctl%40eth0.service
-
-  # Injecting network information to the eth0 config file
-  echo -e "Description='Network - $networkDevice'\nInterface=$networkDevice\nConnection=ethernet\nIP=static\nAddress=('$networkIp/$networkSubnet')\nGateway=('$networkGateway')\nDNS=('$networkDns1' '$networkDns2')" > /temp/netctl@eth0.service
 
   # Copy netctl@eth0 config file to SD card
   cp -rf /temp/netctl@eth0.service /temp/root/etc/systemd/system/
