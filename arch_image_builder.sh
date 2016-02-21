@@ -127,7 +127,10 @@ mount /dev/$sdCard$part2 /temp/root
 
 
                                                   ################## WLAN STUFF NOT USED ANYMORE
-
+###
+# Cleanup Systemd NETWORKING
+rm -rf /temp/root/etc/systemd/system/multi-user.target.wants/systemd-networkd.service
+rm -rf /temp/root/etc/systemd/system/sockets.target.wants/systemd-networkd.socket
 ########################## NETWORKING ##########################
 
 ### NETCTL ETH0 CONFIGURATION:
