@@ -128,9 +128,7 @@ mount /dev/$sdCard$part2 /temp/root
 
                                                   ################## WLAN STUFF NOT USED ANYMORE
 ###
-# Cleanup Systemd NETWORKING
-rm -rf /temp/root/etc/systemd/system/multi-user.target.wants/systemd-networkd.service
-rm -rf /temp/root/etc/systemd/system/sockets.target.wants/systemd-networkd.socket
+
 ########################## NETWORKING ##########################
 
 ### NETCTL ETH0 CONFIGURATION:
@@ -154,13 +152,18 @@ rm -rf /temp/root/etc/systemd/system/sockets.target.wants/systemd-networkd.socke
   # Create symlink
 ln -s '/temp/root/etc/systemd/system/netctl@eth0.service' '/temp/root/etc/systemd/system/multi-user.target.wants/netctl@eth0.service'
 
-
-
 ### POPULATE DNS CONFIGURATION:
   # Populate /etc/resolv.conf with new dns servers:
   echo -e "search $networkDnsSearch\nnameserver $networkDns1\nnameserver $networkDns2" > /temp/root/etc/resolv.conf
 
+### CLEANUP SYSTEMD NETWORKING AND RESOLVING
 
+  # Cleanup Systemd NETWORKING
+  rm -rf /temp/root/etc/systemd/system/multi-user.target.wants/systemd-networkd.service
+  rm -rf /temp/root/etc/systemd/system/sockets.target.wants/systemd-networkd.socket
+
+  # Cleanup Systemd RESOLVING
+  #rm -rf /temp/root/etc/systemd/system/multi-user.target.wants/systemd-resolved.service
 
 ########################## SYSTEM CONFIGURATION ##########################
 
