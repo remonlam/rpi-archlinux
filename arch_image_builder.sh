@@ -124,7 +124,7 @@ mount /dev/$sdCard$part2 /temp/root
   cp -rf /temp/eth0 /temp/root/etc/netctl/
 
 
-### SYSTEMD ETH0.SERVICE CONFIGURATION
+### SYSTEMD ETH0.SERVICE CONFIGURATION:
   # Copy eth0.service file to systemd and create symlink to make it work at first boot
   wget -P /temp/ https://raw.githubusercontent.com/remonlam/rpi-archlinux/master/systemd_config/netctl%40eth0.service
 
@@ -134,6 +134,7 @@ mount /dev/$sdCard$part2 /temp/root
   # Create symlink
 ln -s '/temp/root/etc/systemd/system/netctl@eth0.service' '/temp/root/etc/systemd/system/multi-user.target.wants/netctl@eth0.service'
 
+
 ### POPULATE DNS CONFIGURATION:
 
   # Remove symlink to resolv.conf
@@ -141,7 +142,8 @@ ln -s '/temp/root/etc/systemd/system/netctl@eth0.service' '/temp/root/etc/system
   # Populate /etc/resolv.conf with new dns servers:
   echo -e "search $networkDnsSearch\nnameserver $networkDns1\nnameserver $networkDns2" > /temp/root/etc/resolv.conf
 
-### CLEANUP SYSTEMD NETWORKING AND RESOLVING
+
+### CLEANUP SYSTEMD NETWORKING AND RESOLVING:
 
   # Cleanup Systemd NETWORKING
   rm -rf /temp/root/etc/systemd/system/multi-user.target.wants/systemd-networkd.service
@@ -161,7 +163,6 @@ ln -s '/temp/root/etc/systemd/system/netctl@eth0.service' '/temp/root/etc/system
   # Populate NTP source file "etc/systemd/timesyncd.conf":
   echo -e "NTP=$systemNtp0 $systemNtp1 $systemNtp2 $systemNtp3" > /temp/root/etc/systemd/timesyncd.conf
 
-
 ### SSH CONFIGURATION:
   # Enable root logins for sshd
   sed -i "s/"#"PermitRootLogin prohibit-password/PermitRootLogin yes/" /temp/root/etc/ssh/sshd_config
@@ -173,20 +174,23 @@ ln -s '/temp/root/etc/systemd/system/netctl@eth0.service' '/temp/root/etc/system
 
 ########################## FINALIZING SD CARD POPULATION ##########################
 
-# Do a final sync, and wait 5 seconds before unmouting
+### SYNC CHANGES TO DISK:
+  # Do a final sync, and wait 5 seconds before unmouting
   sync
   echo "Wait 5 seconds before unmouting 'boot' and 'root' mount points"
   sleep 5
 
-#Unmount the boot and root partitions:
+
+### UNMOUNT AND CLEANUP TEMP FILES:
+  # Unmount the boot and root partitions:
   umount /temp/boot /temp/root
   echo "Unmount completed, it's safe to remove the microSD card!"
 
-# Removing data sources
+  # Removing data sources
   echo "Remove datasources, waiting until mount points are removed"
   sleep 5
   rm -rf /temp/
   echo "All files in /temp/ are removed!"
 
-# Set exit code to zero
+  # Set exit code to zero
   exit 0
